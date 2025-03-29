@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi", "MATTAR.LocalAi\MATTAR.LocalAi.csproj", "{5EECFCE5-AE2E-5FCD-4383-5BCD70BE50C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.ConsoleSample", "MATTAR.LocalAi.ConsoleSample\MATTAR.LocalAi.ConsoleSample.csproj", "{8DFC6077-F8CB-9801-6098-5874CEFA6744}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.MauiBlazorHybrid", "MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid.csproj", "{8471DC8A-51AC-4968-A79B-4DC21990329E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.MauiBlazorHybrid.Shared", "MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid.Shared\MATTAR.LocalAi.MauiBlazorHybrid.Shared.csproj", "{5FF7D2EC-AE9B-4D51-8252-B29D778C1A02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.MauiBlazorHybrid.Web", "MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid.Web\MATTAR.LocalAi.MauiBlazorHybrid.Web.csproj", "{8AE963BC-96AE-4D48-81E3-E3D95F3B695C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5EECFCE5-AE2E-5FCD-4383-5BCD70BE50C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EECFCE5-AE2E-5FCD-4383-5BCD70BE50C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EECFCE5-AE2E-5FCD-4383-5BCD70BE50C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EECFCE5-AE2E-5FCD-4383-5BCD70BE50C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DFC6077-F8CB-9801-6098-5874CEFA6744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DFC6077-F8CB-9801-6098-5874CEFA6744}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DFC6077-F8CB-9801-6098-5874CEFA6744}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DFC6077-F8CB-9801-6098-5874CEFA6744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8471DC8A-51AC-4968-A79B-4DC21990329E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8471DC8A-51AC-4968-A79B-4DC21990329E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8471DC8A-51AC-4968-A79B-4DC21990329E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8471DC8A-51AC-4968-A79B-4DC21990329E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FF7D2EC-AE9B-4D51-8252-B29D778C1A02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FF7D2EC-AE9B-4D51-8252-B29D778C1A02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FF7D2EC-AE9B-4D51-8252-B29D778C1A02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FF7D2EC-AE9B-4D51-8252-B29D778C1A02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AE963BC-96AE-4D48-81E3-E3D95F3B695C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AE963BC-96AE-4D48-81E3-E3D95F3B695C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AE963BC-96AE-4D48-81E3-E3D95F3B695C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AE963BC-96AE-4D48-81E3-E3D95F3B695C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2B83809D-87BC-4F00-AE28-2ED8FCFB8EA3}
+	EndGlobalSection
+EndGlobal
