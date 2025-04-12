@@ -1,29 +1,21 @@
 ﻿using MATTAR.LocalAi;
-using Microsoft.Extensions.Configuration;
 
 Console.WriteLine("Hello, World!");
 Console.WriteLine("This is a simple console app that uses the MATTAR Local AI package.");
 
-var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .Build();
-
-var modelPath = configuration["ModelPath"] 
-    ?? throw new InvalidOperationException("ModelPath is not set in appsettings.json");
-var vectorStoreModelPath = configuration["VectorStoreModelPath"]
-    ?? throw new InvalidOperationException("ModelPath is not set in appsettings.json");
-var vectorStoreVocabModelPath = configuration["VectorStoreVocabModelPath"] 
-    ?? throw new InvalidOperationException("ModelPath is not set in appsettings.json");
-
-var chatSettings = new ChatSettings
+ChatSettings settings = new()
 {
-    ModelPath = modelPath,
-    VectorStoreModelPath = vectorStoreModelPath,
-    VectorStoreVocabModelPath = vectorStoreVocabModelPath
+    SystemPrompt = @"
+You are a helpful assistant.
+Answer the user's questions as best as you can.
+You speak the same laguage of the user.
+You are a large language model trained by Microsoft.
+You answer the user's questions briefly and concisely.
+You answer only to the last question or to the last message.
+"
 };
 
-var chat = new Chat(chatSettings);
+IChat chat = new Chat(settings);
 
 while (true)
 {
@@ -33,7 +25,7 @@ while (true)
     {
         break;
     }
-    Console.Write($"Assistant: ");
+    Console.WriteLine($"Assistant: ");
     await chat.Run(userQ);
     Console.WriteLine("");
 }

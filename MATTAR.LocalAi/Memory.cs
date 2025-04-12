@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.VectorData;
-using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Embeddings;
 
 #pragma warning disable SKEXP0070
 #pragma warning disable SKEXP0001
 public class Memory
 {
-    private Kernel _kernel;
     private readonly IVectorStore _vectorStore;
     private readonly ITextEmbeddingGenerationService _textEmbeddingGenerationService;
 
     public IVectorStoreRecordCollection<Guid, Document> Collection { get; }
 
-    public Memory(IVectorStore vectorStore, ITextEmbeddingGenerationService textEmbeddingGenerationService)
+    public Memory(
+        IVectorStore vectorStore,
+        ITextEmbeddingGenerationService textEmbeddingGenerationService)
     {
         _vectorStore = vectorStore;
         _textEmbeddingGenerationService = textEmbeddingGenerationService;
@@ -75,12 +75,28 @@ public class Memory
                 ContentEmbedding = null,
                 Tags = new[] { "budget", "no pool" }
             },
+            new Document
+            {
+                Id = Guid.NewGuid(),
+                Name = "Les noms de chat",
+                Content = "J'ai deux chats, l'un est noir et s'appelle COCA. L'autre est roux et blanc, il s'appelle Nino. Coca vomit souvent. Nino quant à lui est grincheux.",
+                ContentEmbedding = null,
+                Tags = new[] { "budget", "no pool" }
+            },
+            new Document
+            {
+                Id = Guid.NewGuid(),
+                Name = "La situation physique de mes chats",
+                Content = "Mes chats sont de différent poids. Coca pèse 3,7 kg alors que Nino pèse 6 kg.",
+                ContentEmbedding = null,
+                Tags = new[] { "chat" }
+            },
         ];
-
+        
         foreach (var d in documents)
         {
             d.ContentEmbedding = await _textEmbeddingGenerationService
-                .GenerateEmbeddingAsync(d.Content);
+                .GenerateEmbeddingAsync($"{d.Name} - {d.Content}");
         }
 
         return documents;

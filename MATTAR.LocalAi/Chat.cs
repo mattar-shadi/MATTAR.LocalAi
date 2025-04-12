@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using MATTAR.LocalAi.Functions;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -8,7 +9,7 @@ namespace MATTAR.LocalAi;
 
 #pragma warning disable SKEXP0070
 #pragma warning disable SKEXP0001
-public class Chat
+public class Chat : IChat
 {
     private readonly Kernel? _kernel;
     private readonly ChatHistory _history;
@@ -19,24 +20,34 @@ public class Chat
 
     public Chat(ChatSettings settings)
     {
-        string modelPath = Path.GetFullPath(settings.ModelPath);
+        string modelPath = $@"{AppContext.BaseDirectory}\models\cpu-int4-rtn-block-32-acc-level-4\";
+        if (!Path.Exists(modelPath))
+            throw new DirectoryNotFoundException(modelPath);
         Debug.Print($"Model path: {modelPath}");
 
-        string vectorStoreModelPath = Path.GetFullPath(settings.VectorStoreModelPath);
+        string vectorStoreModelPath = $@"{AppContext.BaseDirectory}\models\bge-micro-v2\onnx\model.onnx";
+        if (!Path.Exists(vectorStoreModelPath))
+            throw new FileNotFoundException(vectorStoreModelPath);
         Debug.Print($"Vector Store Model Path: {vectorStoreModelPath}");
 
-        string vectorStoreVocabModelPath = Path.GetFullPath(settings.VectorStoreVocabModelPath);
+        string vectorStoreVocabModelPath = $@"{AppContext.BaseDirectory}\models\bge-micro-v2\vocab.txt";
+        if (!Path.Exists(vectorStoreVocabModelPath))
+            throw new FileNotFoundException(vectorStoreVocabModelPath);
         Debug.Print($"Vector Store Vocab Model Path: {vectorStoreVocabModelPath}");
 
         // Create Semantic Kernel
         var kernelBuilder = Kernel.CreateBuilder();
-        kernelBuilder.AddOnnxRuntimeGenAIChatCompletion(modelPath: modelPath);  // set onnx runtime model
-        kernelBuilder.AddInMemoryVectorStore();                                 // Add In Memory Vector Store 
-        kernelBuilder.AddVectorStoreTextSearch<Document>();                     // Add Vector Store Text Search
+        // set onnx runtime model
+        kernelBuilder.AddOnnxRuntimeGenAIChatCompletion(modelId: "phi4", modelPath: modelPath);
+        // Add In Memory Vector Store 
+        kernelBuilder.AddInMemoryVectorStore();
+        // Add Vector Store Text Search
+        kernelBuilder.AddVectorStoreTextSearch<Document>();                    
         kernelBuilder.AddBertOnnxTextEmbeddingGeneration(
             onnxModelPath: vectorStoreModelPath,
             vocabPath: vectorStoreVocabModelPath
         );
+        kernelBuilder.Plugins.AddFromType<TimeInformationPlugin>();
 
         _kernel = kernelBuilder.Build();
 
@@ -54,6 +65,23 @@ public class Chat
 
         // Create a History
         _history = new ChatHistory();
+        _history.AddSystemMessage(settings.SystemPrompt);
+        _history.AddSystemMessage(@"
+You are a helpful assistant with some tools.
+<|tool|>
+[
+    {
+        ""name"": ""GetCurrentUtcTime"",
+        ""description"": ""Get current time and retrieves it in UTC."",
+        ""parameters"": [],
+        ""returns"": {
+            ""name"": ""currentUTCDate"",
+            ""type"": ""str""
+        }
+    }
+]
+<|/tool|>
+");
     }
 
     /// <summary>
@@ -69,39 +97,49 @@ public class Chat
         CancellationToken cancellationToken = default)
     {
         action ??= (s) => Console.Write(s);
-        _history.AddSystemMessage(@"Tu est un assistant, tu répond toujours en français.");
+
         _history.AddUserMessage(userQ);
-        var response = "";
 
         // Generate a vector for your search text, using your chosen embedding generation implementation.
         ReadOnlyMemory<float> searchVector = await _textEmbeddingGenerationService.GenerateEmbeddingAsync(userQ);
 
         // Do the search, passing an options object with a Top value to limit resulst to the single top match.
-        var searchResult = await _collection.VectorizedSearchAsync(searchVector, new() { Top = 1 });
+        VectorSearchOptions<Document> searchOptions = new() { Top = 2 };
+        var searchResult = await _collection.VectorizedSearchAsync(searchVector, searchOptions, cancellationToken);
 
-        string search = "Result of the research :";
-        // Inspect the returned hotel.
-        await foreach (var record in searchResult.Results)
+        List<string> search = [@"## Résultat de ma recherche :"];
+        await foreach (VectorSearchResult<Document> record in searchResult.Results)
         {
-            string research = $@"
-File name: {record.Record.Name}
-File content: {record.Record.Content}
-File score: {record.Score}
-Tags : {record.Record.Tags.Aggregate((x,y) => string.Concat(x, y))}
-";
-            search += research;
-            Debug.Print(search);
-        }
-        _history.AddSystemMessage(search);
+            if (record.Score < 0.23)
+                continue;
 
+            search.Add($"\n - {record.Record.Content}");
+        }
+
+        if(search.Count > 1)
+        {
+            _history.AddUserMessage(string.Join("", search));
+        }
+        
         var result = _chat?.GetStreamingChatMessageContentsAsync(
             chatHistory: _history,
+            executionSettings: new PromptExecutionSettings
+            {
+                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+                ModelId = "phi4",
+                ExtensionData = new Dictionary<string, object>
+                {
+                    {"Current Date", DateTime.Now.ToString("R") }
+                },
+            },
             cancellationToken: cancellationToken);
 
         if (result is null)
             return;
 
-        await foreach (var message in result)
+        string response = string.Empty;
+
+        await foreach (StreamingChatMessageContent message in result.WithCancellation(cancellationToken))
         {
             action(message.ToString());
             response += message.Content;
