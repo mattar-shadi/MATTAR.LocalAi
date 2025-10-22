@@ -1,17 +1,19 @@
 ﻿@page "/chat"
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject IChat ChatService
 @using System.Diagnostics;
+@using MATTAR.LocalAi.Abstractions
 
 <PageTitle>Chat</PageTitle>
 
 <section class="container col">
-    <header class="container padding row">
+    <header class="row container padding">
         <h1 class="row">@conversation.Title</h1>
         <span class="row">@conversation.CreatedAt.ToShortDateString()</span>
     </header>
 
-    <section @ref="chatContainer" class="container block padding row scroll" style="height: 55vh; overflow-y: auto;">
+    <section @ref="chatContainer" class="row container block padding" style="height: 65vh; overflow-y: auto;">
         @foreach (Message msg in conversation.Messages)
         {
             <section class="card-4 padding margin @(msg.Autors == "User" ? "grey text-dark-gray" : "")">
@@ -25,126 +27,9 @@
             </section>
         }
     </section>
-    <footer class="container row col margin" >
-        <textarea id="question" class="block margin row" rows="3" @bind="userMessage" @onkeypress="HandleKeyPress" />
+    <footer class="row col container padding" >
+        <textarea @ref="inputChat" id="question" class="block margin row" rows="3" @bind="userMessage" @onkeypress="HandleKeyPress" />
         <input @ref="sendButton" id="button" type="button" class="btn green right row" value="Send" @onclick="() => Task.Run(DisplayAssistantMessage)" />
         <input @ref="stopButton" id="stopButton" type="button" class="btn red right row hide" value="Stop" @onclick="() => Task.Run(StopGeneration)" />
     </footer>
 </section>
-
-@code {
-    private string userMessage = string.Empty;
-    private Conversation conversation = new();
-    private IChat? chat;
-    private ElementReference chatContainer;
-    private ElementReference stopButton;
-    private ElementReference sendButton;
-    private CancellationTokenSource _cancellationTokenSource = new();
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        conversation.Title = "Nouvelle conversation";
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-        if (!firstRender)
-            return;
-
-        conversation.Messages.Add(new Message
-            {
-                Autors = "Assistant",
-                Content = "Bonjour, je suis votre assistant. Comment puis-je vous aider aujourd'hui ?",
-            });
-        conversation.Messages.Last().HtmlContent = Markdown.ToHtml(conversation.Messages.Last().Content);
-        ChatSettings chatSettings = new()
-            {
-                SystemPrompt = @"
-You are a helpful assistant.
-Answer the user's questions as best as you can.
-You speak the same laguage of the user.
-You are a large language model trained by Microsoft.
-You answer the user's questions briefly and concisely.
-Answer only with research result in the prompt !!!
-Don't answer without information based on the prompt !!!
-"
-            };
-        await Task.Run(async () =>
-        {
-            chat = new MATTAR.LocalAi.Chat(chatSettings);
-            await InvokeAsync(StateHasChanged);
-        });
-    }
-
-    private async Task DisplayAssistantMessage()
-    {
-        if (string.IsNullOrWhiteSpace(userMessage))
-            return;
-
-        conversation.Messages.Add(new Message { Autors = "User", Content = userMessage });
-        conversation.Messages.Add(new Message { Autors = "Assistant", Content = "" });
-        userMessage = string.Empty;
-        await JSRuntime.InvokeVoidAsync("addHideClass", new object[] { sendButton });
-        await JSRuntime.InvokeVoidAsync("removeHideClass", new object[] { stopButton });
-        await InvokeAsync(StateHasChanged);
-
-        if (chat is null)
-        {
-            throw new ArgumentException("Chat is not initialized.");
-        };
-
-        try
-        {
-            await chat.Run(conversation.Messages.SkipLast(1).Last().Content, (s) =>
-            {
-                conversation.Messages.Last().Content += s;
-                conversation.Messages.Last().HtmlContent = Markdown.ToHtml(conversation.Messages.Last().Content);
-                JSRuntime.InvokeVoidAsync("scrollToEnd", new object[] { chatContainer });
-                InvokeAsync(StateHasChanged);
-            }, _cancellationTokenSource.Token);
-        }
-        catch (OperationCanceledException)
-        {
-            _cancellationTokenSource = new CancellationTokenSource();
-        }
-        finally
-        {
-            await JSRuntime.InvokeVoidAsync("addHideClass", new object[] { stopButton });
-            await JSRuntime.InvokeVoidAsync("removeHideClass", new object[] { sendButton });
-        }
-    }
-
-    private async Task StopGeneration()
-    {
-        await _cancellationTokenSource.CancelAsync();
-    }
-
-    private async void HandleKeyPress(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
-        {
-            await DisplayAssistantMessage();
-        }
-    }
-
-    private class Conversation
-    {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string Title { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public List<Message> Messages { get; set; } = new List<Message>();
-    }
-
-    private class Message
-    {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string Autors { get; set; } = string.Empty;
-        public string Content { get; set; } = string.Empty;
-        public string HtmlContent { get; set; } = string.Empty;
-        public DateTime CreateAt { get; set; } = DateTime.Now;
-    }
-}

@@ -1,11 +1,12 @@
-﻿<section class="top-row navbar navbar-dark" style="height: 120px;">
-    <img class="margin padding show-inline-block" src="_content/MATTAR.LocalAi.MauiBlazorHybrid.Shared/logo.svg" style="height: 100px;" />
-    <h4 class="text-white show-inline-block">MLAI</h4>
+﻿<section class="row navbar navbar-dark" style="height: 120px;">
+    <h4 class="margin text-white show-inline-block">MATTAR Local AI</h4>
 </section>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<section class="row">
+    <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+</section>
 
-<div class="nav-scrollable bar-block padding-top" onclick="document.querySelector('.navbar-toggler').click()">
+<section class="row padding-top" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link bar-item" href="" Match="NavLinkMatch.All">
@@ -25,4 +26,8 @@
             </NavLink>
         </div>
     </nav>
-</div>
+</section>
+
+<section class="row bottom margin-right">
+    <img class="margin padding show-inline-block" src="_content/MATTAR.LocalAi.MauiBlazorHybrid.Shared/logo.svg" style="height: 100px;" />
+</section>

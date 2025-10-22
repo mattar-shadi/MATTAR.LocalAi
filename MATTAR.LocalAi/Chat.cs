@@ -1,9 +1,10 @@
-using System.Diagnostics;
+using MATTAR.LocalAi.Abstractions;
 using MATTAR.LocalAi.Functions;
-using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Embeddings;
+using Microsoft.Extensions.AI;
+using System.Diagnostics;
 
 namespace MATTAR.LocalAi;
 
@@ -14,11 +15,10 @@ public class Chat : IChat
     private readonly Kernel? _kernel;
     private readonly ChatHistory _history;
     private readonly IChatCompletionService? _chat;
-    private readonly ITextEmbeddingGenerationService _textEmbeddingGenerationService;
-    private readonly IVectorStore _vectorStore;
-    private readonly IVectorStoreRecordCollection<Guid, Document> _collection;
+    private readonly IEmbeddingGenerator<string, Embedding<float>> _textEmbeddingGenerationService;
+    private readonly IKnowledgeBase _knowledgeBase;
 
-    public Chat(ChatSettings settings)
+    public Chat(IChatSettings settings, IKnowledgeBase knowledgeBase = null)
     {
         string modelPath = $@"{AppContext.BaseDirectory}\models\cpu-int4-rtn-block-32-acc-level-4\";
         if (!Path.Exists(modelPath))
@@ -35,33 +35,34 @@ public class Chat : IChat
             throw new FileNotFoundException(vectorStoreVocabModelPath);
         Debug.Print($"Vector Store Vocab Model Path: {vectorStoreVocabModelPath}");
 
-        // Create Semantic Kernel
+        // Créer Semantic Kernel
         var kernelBuilder = Kernel.CreateBuilder();
         // set onnx runtime model
         kernelBuilder.AddOnnxRuntimeGenAIChatCompletion(modelId: "phi4", modelPath: modelPath);
-        // Add In Memory Vector Store 
-        kernelBuilder.AddInMemoryVectorStore();
+
         // Add Vector Store Text Search
-        kernelBuilder.AddVectorStoreTextSearch<Document>();                    
-        kernelBuilder.AddBertOnnxTextEmbeddingGeneration(
+        kernelBuilder.AddVectorStoreTextSearch<Document>();
+        kernelBuilder.AddBertOnnxEmbeddingGenerator(
             onnxModelPath: vectorStoreModelPath,
             vocabPath: vectorStoreVocabModelPath
         );
-        kernelBuilder.Plugins.AddFromType<TimeInformationPlugin>();
+        //kernelBuilder.AddBertOnnxTextEmbeddingGeneration(
+        //    onnxModelPath: vectorStoreModelPath,
+        //    vocabPath: vectorStoreVocabModelPath
+        //);
+
+        kernelBuilder.Plugins.AddFromType<TimeInformationPlugin>("GetCurrentUtcTime");
 
         _kernel = kernelBuilder.Build();
 
         // Create chat
         _chat = _kernel.GetRequiredService<IChatCompletionService>();
 
-        // Get Vector Store
-        _vectorStore = _kernel.GetRequiredService<IVectorStore>();
-
         // Get Text Embedding Generation Service
-        _textEmbeddingGenerationService = _kernel.GetRequiredService<ITextEmbeddingGenerationService>();
+        _textEmbeddingGenerationService = _kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
 
         // Get Vector Store Record Collection
-        _collection = new Memory(_vectorStore, _textEmbeddingGenerationService).Collection;
+        _knowledgeBase = knowledgeBase;
 
         // Create a History
         _history = new ChatHistory();
@@ -93,6 +94,7 @@ You are a helpful assistant with some tools.
     /// <returns></returns>
     public async Task Run(
         string userQ,
+        string? knowledgeBaseName = null,
         Action<string>? action = null,
         CancellationToken cancellationToken = default)
     {
@@ -100,38 +102,32 @@ You are a helpful assistant with some tools.
 
         _history.AddUserMessage(userQ);
 
-        // Generate a vector for your search text, using your chosen embedding generation implementation.
-        ReadOnlyMemory<float> searchVector = await _textEmbeddingGenerationService.GenerateEmbeddingAsync(userQ);
-
-        // Do the search, passing an options object with a Top value to limit resulst to the single top match.
-        VectorSearchOptions<Document> searchOptions = new() { Top = 2 };
-        var searchResult = await _collection.VectorizedSearchAsync(searchVector, searchOptions, cancellationToken);
-
-        List<string> search = [@"## Résultat de ma recherche :"];
-        await foreach (VectorSearchResult<Document> record in searchResult.Results)
+        if(knowledgeBaseName is not null && _knowledgeBase is not null)
         {
-            if (record.Score < 0.23)
-                continue;
-
-            search.Add($"\n - {record.Record.Content}");
+            List<KnowledgeSearchResult> results = await _knowledgeBase.Search(userQ, knowledgeBaseName, cancellationToken);
+            if (results.Count > 1)
+            {
+                string formattedAllResults = "I found informations in Knowledge Base: \n";
+                formattedAllResults += string.Join("", results.Select(x => x.Document?.ToString()));
+                _history.AddAssistantMessage(formattedAllResults);
+                action(formattedAllResults);
+            }
         }
 
-        if(search.Count > 1)
+        // Prompt Execution Settings
+        // The modelId is the name of the model you want to use.
+        // The extension data is a dictionary of key-value pairs that you can use to pass additional data to the model.
+        // The function choice behavior is a setting that determines how the model should choose which function to call.
+        PromptExecutionSettings settings = new()
         {
-            _history.AddUserMessage(string.Join("", search));
-        }
-        
+            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+            ModelId = "phi4",
+        };
+
         var result = _chat?.GetStreamingChatMessageContentsAsync(
             chatHistory: _history,
-            executionSettings: new PromptExecutionSettings
-            {
-                FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
-                ModelId = "phi4",
-                ExtensionData = new Dictionary<string, object>
-                {
-                    {"Current Date", DateTime.Now.ToString("R") }
-                },
-            },
+            executionSettings: settings,
+            kernel: _kernel,
             cancellationToken: cancellationToken);
 
         if (result is null)

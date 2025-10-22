@@ -9,7 +9,12 @@
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new MainPage()) { Title = "MATTAR.LocalAi.MauiBlazorHybrid" };
+            return new Window(new MainPage())
+            {
+                Title = "MATTAR LOCAL AI",
+                MinimumHeight = 900,
+                MinimumWidth = 800
+            };
         }
     }
 }

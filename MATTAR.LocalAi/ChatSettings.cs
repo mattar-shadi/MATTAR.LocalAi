@@ -1,7 +1,8 @@
-﻿namespace MATTAR.LocalAi
+﻿using MATTAR.LocalAi.Abstractions;
+
+namespace MATTAR.LocalAi;
+
+public class ChatSettings : IChatSettings
 {
-    public class ChatSettings
-    {
-        public string SystemPrompt { get; set; } = string.Empty;
-    }
+    public string SystemPrompt { get; set; } = string.Empty;
 }

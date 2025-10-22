@@ -15,3 +15,17 @@ function removeHideClass(element) {
         element.classList.remove('hide');
     }
 }
+
+// Désactive le champ de saisie en ajoutant l'attribut 'disabled'
+function disableInput(element) {
+    if (element) {
+        element.setAttribute('disabled', 'disabled');
+    }
+}
+
+// Active le champ de saisie en supprimant l'attribut 'disabled'
+function enableInput(element) {
+    if (element) {
+        element.removeAttribute('disabled');
+    }
+}
