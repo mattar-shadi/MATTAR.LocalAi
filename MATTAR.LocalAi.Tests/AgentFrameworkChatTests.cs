@@ -4,10 +4,10 @@ using Microsoft.SemanticKernel.Connectors.InMemory;
 
 namespace MATTAR.LocalAi.Tests
 {
-    public class Tests
+    public class AgentFrameworkChatTests
     {
         private IChatSettings _chatSettings;
-        private IChat _chat;
+        private ChatAgent _chat;
         private VectorStore _vectorStore;
 
         [SetUp]
@@ -18,7 +18,7 @@ namespace MATTAR.LocalAi.Tests
                 SystemPrompt = @"You are a AI assistant."
             };
             _vectorStore = new InMemoryVectorStore();
-            _chat = new Chat(_chatSettings);
+            _chat = new ChatAgent(_chatSettings);
         }
 
         [TearDown]
@@ -28,13 +28,13 @@ namespace MATTAR.LocalAi.Tests
         }
 
         [Test]
-        public void Test1()
+        public void SimpleTest()
         {
             _chat.Run(
                 "Hello, how are you?",
                 action: (response) =>
                 {
-                    Console.Write(response);
+                    TestContext.Out.Write(response);
                 },
                 cancellationToken: CancellationToken.None).Wait();
             Assert.Pass();

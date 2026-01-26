@@ -8,17 +8,15 @@ using System.Diagnostics;
 
 namespace MATTAR.LocalAi;
 
-#pragma warning disable SKEXP0070
-#pragma warning disable SKEXP0001
 public class Chat : IChat
 {
     private readonly Kernel? _kernel;
     private readonly ChatHistory _history;
     private readonly IChatCompletionService? _chat;
     private readonly IEmbeddingGenerator<string, Embedding<float>> _textEmbeddingGenerationService;
-    private readonly IKnowledgeBase _knowledgeBase;
+    private readonly IKnowledgeBase? _knowledgeBase;
 
-    public Chat(IChatSettings settings, IKnowledgeBase knowledgeBase = null)
+    public Chat(IChatSettings settings, IKnowledgeBase? knowledgeBase = null)
     {
         string modelPath = $@"{AppContext.BaseDirectory}\models\cpu-int4-rtn-block-32-acc-level-4\";
         if (!Path.Exists(modelPath))
@@ -65,7 +63,7 @@ public class Chat : IChat
         _knowledgeBase = knowledgeBase;
 
         // Create a History
-        _history = new ChatHistory();
+        _history = [];
         _history.AddSystemMessage(settings.SystemPrompt);
         _history.AddSystemMessage(@"
 You are a helpful assistant with some tools.
@@ -104,7 +102,7 @@ You are a helpful assistant with some tools.
 
         if(knowledgeBaseName is not null && _knowledgeBase is not null)
         {
-            List<KnowledgeSearchResult> results = await _knowledgeBase.Search(userQ, knowledgeBaseName, cancellationToken);
+            List<IKnowledgeSearchResult> results = await _knowledgeBase.Search(userQ, knowledgeBaseName, cancellationToken);
             if (results.Count > 1)
             {
                 string formattedAllResults = "I found informations in Knowledge Base: \n";

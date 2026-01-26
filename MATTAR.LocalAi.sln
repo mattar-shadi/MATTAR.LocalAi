@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11201.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi", "MATTAR.LocalAi\MATTAR.LocalAi.csproj", "{5EECFCE5-AE2E-5FCD-4383-5BCD70BE50C8}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.MauiBlazorHybrid.Web", "MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid.Web\MATTAR.LocalAi.MauiBlazorHybrid.Web.csproj", "{8AE963BC-96AE-4D48-81E3-E3D95F3B695C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.Tests", "MATTAR.LocalAi.Tests\MATTAR.LocalAi.Tests.csproj", "{C61F9DBE-7080-4B4D-9D5F-9BED9C0C4CF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.Abstractions", "MATTAR.LocalAI.Abstraction\MATTAR.LocalAi.Abstractions.csproj", "{48B8F461-27D1-4CE8-9E3C-FA19BB0BCACB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{C61F9DBE-7080-4B4D-9D5F-9BED9C0C4CF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C61F9DBE-7080-4B4D-9D5F-9BED9C0C4CF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C61F9DBE-7080-4B4D-9D5F-9BED9C0C4CF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48B8F461-27D1-4CE8-9E3C-FA19BB0BCACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48B8F461-27D1-4CE8-9E3C-FA19BB0BCACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48B8F461-27D1-4CE8-9E3C-FA19BB0BCACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48B8F461-27D1-4CE8-9E3C-FA19BB0BCACB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

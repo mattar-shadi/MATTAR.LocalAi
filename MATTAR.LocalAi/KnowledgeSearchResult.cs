@@ -1,8 +1,10 @@
-﻿namespace MATTAR.LocalAi;
+﻿using MATTAR.LocalAi.Abstractions;
 
-public class KnowledgeSearchResult
+namespace MATTAR.LocalAi;
+
+public class KnowledgeSearchResult : IKnowledgeSearchResult
 {
-    public Document? Document { get; set; }
+    public IDocument? Document { get; set; }
     public string KnowledgeBaseName { get; set; } = string.Empty;
     public double? Score { get; set; }
 }

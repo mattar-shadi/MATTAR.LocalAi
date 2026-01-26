@@ -2,39 +2,30 @@
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel.Connectors.SqliteVec;
-using Microsoft.SemanticKernel.Embeddings;
 
 namespace MATTAR.LocalAi;
 
-#pragma warning disable SKEXP0001
-public class KnowledgeBase : IKnowledgeBase
+public class KnowledgeBase(
+    VectorStore vectorStore,
+    IEmbeddingGenerator<string,
+        Embedding<float>> embeddingGenerator) : IKnowledgeBase
 {
-    private readonly VectorStore _vectorStore;
-    private readonly IEmbeddingGenerator<string, Embedding<float>> _embeddingGenerator;
-
-    public KnowledgeBase(
-        VectorStore vectorStore,
-        IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator)
-    {
-        _vectorStore = vectorStore;
-        _embeddingGenerator = embeddingGenerator;
-    }
+    private readonly VectorStore _vectorStore = vectorStore;
+    private readonly IEmbeddingGenerator<string, Embedding<float>> _embeddingGenerator = embeddingGenerator;
 
     public async Task CreateKnowledgeBase(
         string name,
-        IEnumerable<Document> documents)
+        IEnumerable<IDocument> documents)
     {
-        var collection2 = new SqliteVectorStore("database",
-            new SqliteVectorStoreOptions { EmbeddingGenerator = _embeddingGenerator });
-
-        VectorStoreCollection<ulong, Document> existingCollection = _vectorStore?.GetCollection<ulong, Document>(name);
+        VectorStoreCollection<ulong, IDocument> existingCollection = _vectorStore.GetCollection<ulong, IDocument>(name);
+        
         await existingCollection.EnsureCollectionExistsAsync();
         await UpdateOrInsertAsync(existingCollection, documents);
     }
 
     public static async Task UpdateOrInsertAsync(
-        VectorStoreCollection<ulong, Document> collection,
-        IEnumerable<Document> documents)
+        VectorStoreCollection<ulong, IDocument> collection,
+        IEnumerable<IDocument> documents)
     {
         // Create a record and update or insert with the already generated embedding.
         foreach (var document in documents)
@@ -43,13 +34,13 @@ public class KnowledgeBase : IKnowledgeBase
         }
     }
 
-    public async Task<List<KnowledgeSearchResult>> Search(
+    public async Task<List<IKnowledgeSearchResult>> Search(
         string query,
         string knowledgeBaseName,
         CancellationToken cancellationToken = default)
     {
         // Generate a vector for your search text, using your chosen embedding generation implementation.
-        Embedding<float> searchVector = await _embeddingGenerator.GenerateAsync(value: query);
+        Embedding<float> searchVector = await _embeddingGenerator.GenerateAsync(value: query, cancellationToken: cancellationToken);
 
         VectorStoreCollection<ulong, Document> collection = _vectorStore.GetCollection<ulong, Document>(knowledgeBaseName);
 
@@ -61,12 +52,12 @@ public class KnowledgeBase : IKnowledgeBase
             options: searchOptions,
             cancellationToken: cancellationToken);
 
-        List<KnowledgeSearchResult> search = [];
+        List<IKnowledgeSearchResult> search = [];
         await foreach (VectorSearchResult<Document> record in searchResult)
         {
             KnowledgeSearchResult result = new()
             {
-                Document = record.Record,
+                Document = (IDocument)record.Record, // Cast explicite vers IDocument
                 KnowledgeBaseName = knowledgeBaseName,
                 Score = record.Score
             };

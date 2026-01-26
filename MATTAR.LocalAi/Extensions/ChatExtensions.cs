@@ -10,9 +10,7 @@ namespace MATTAR.LocalAi.Extensions;
 public static class ChatExtensions
 {
     public static IServiceCollection AddChatForMaui(
-        this IServiceCollection services,
-        SqliteVectorStoreOptions? options = null,
-        string? serviceId = null)
+        this IServiceCollection services)
     {
         services.AddTransient<IChat, Chat>();
         services.AddSingleton<IKnowledgeBase, KnowledgeBase>();
@@ -21,10 +19,18 @@ public static class ChatExtensions
         return services;
     }
 
+    public static IServiceCollection AddChatAgent(
+        this IServiceCollection services)
+    {
+        services.AddTransient<IChat, ChatAgent>();
+        services.AddSingleton<IKnowledgeBase, KnowledgeBase>();
+        services.AddChatSqliteMemory();
+
+        return services;
+    }
+
     public static IServiceCollection AddChatSqliteMemory(
-        this IServiceCollection services,
-        SqliteVectorStoreOptions? options = null,
-        string? serviceId = null)
+        this IServiceCollection services)
     {
 //        services.AddSingleton<SqliteConnection>(sp =>
 //        {

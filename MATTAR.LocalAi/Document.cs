@@ -3,7 +3,7 @@ using Microsoft.Extensions.VectorData;
 
 namespace MATTAR.LocalAi;
 
-public class Document
+public class Document : IDocument
 {
     [VectorStoreKey]
     public ulong Id { get; set; }
@@ -24,9 +24,6 @@ public class Document
 
     public override string ToString()
     {
-        return $@"
-- {Id} : {Name} ({FullPath})
-    {Content} 
-";
+        return $"- {Id} : {Name} ({FullPath}) \n {Content}";
     }
 }

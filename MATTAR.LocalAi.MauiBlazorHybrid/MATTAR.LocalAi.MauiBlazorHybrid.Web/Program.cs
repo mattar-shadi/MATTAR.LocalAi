@@ -1,3 +1,6 @@
+using MATTAR.LocalAi;
+using MATTAR.LocalAi.Abstractions;
+using MATTAR.LocalAi.Extensions;
 using MATTAR.LocalAi.MauiBlazorHybrid.Shared.Services;
 using MATTAR.LocalAi.MauiBlazorHybrid.Web.Components;
 using MATTAR.LocalAi.MauiBlazorHybrid.Web.Services;
@@ -16,6 +19,9 @@ builder.Services.Configure<CircuitOptions>(options =>
 
 // Add device-specific services used by the MATTAR.LocalAi.MauiBlazorHybrid.Shared project
 builder.Services.AddSingleton<IFormFactor, FormFactor>();
+
+builder.Services.AddTransient<IChat, Chat>();
+builder.Services.AddChatSqliteMemory();
 
 var app = builder.Build();
 
