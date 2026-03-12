@@ -3,19 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11201.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi", "MATTAR.LocalAi\MATTAR.LocalAi.csproj", "{5EECFCE5-AE2E-5FCD-4383-5BCD70BE50C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi", "src\MATTAR.LocalAi\MATTAR.LocalAi.csproj", "{5EECFCE5-AE2E-5FCD-4383-5BCD70BE50C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.ConsoleSample", "MATTAR.LocalAi.ConsoleSample\MATTAR.LocalAi.ConsoleSample.csproj", "{8DFC6077-F8CB-9801-6098-5874CEFA6744}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.Abstractions", "src\MATTAR.LocalAI.Abstraction\MATTAR.LocalAi.Abstractions.csproj", "{48B8F461-27D1-4CE8-9E3C-FA19BB0BCACB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.MauiBlazorHybrid", "MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid.csproj", "{8471DC8A-51AC-4968-A79B-4DC21990329E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAiAgent", "src\MATTAR.LocalAiAgent\MATTAR.LocalAiAgent.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.MauiBlazorHybrid.Shared", "MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid.Shared\MATTAR.LocalAi.MauiBlazorHybrid.Shared.csproj", "{5FF7D2EC-AE9B-4D51-8252-B29D778C1A02}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.Tests", "tests\MATTAR.LocalAi.Tests\MATTAR.LocalAi.Tests.csproj", "{C61F9DBE-7080-4B4D-9D5F-9BED9C0C4CF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.MauiBlazorHybrid.Web", "MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid.Web\MATTAR.LocalAi.MauiBlazorHybrid.Web.csproj", "{8AE963BC-96AE-4D48-81E3-E3D95F3B695C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.ConsoleSample", "samples\MATTAR.LocalAi.ConsoleSample\MATTAR.LocalAi.ConsoleSample.csproj", "{8DFC6077-F8CB-9801-6098-5874CEFA6744}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.Tests", "MATTAR.LocalAi.Tests\MATTAR.LocalAi.Tests.csproj", "{C61F9DBE-7080-4B4D-9D5F-9BED9C0C4CF2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.MauiBlazorHybrid", "samples\MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid.csproj", "{8471DC8A-51AC-4968-A79B-4DC21990329E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.Abstractions", "MATTAR.LocalAI.Abstraction\MATTAR.LocalAi.Abstractions.csproj", "{48B8F461-27D1-4CE8-9E3C-FA19BB0BCACB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.MauiBlazorHybrid.Shared", "samples\MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid.Shared\MATTAR.LocalAi.MauiBlazorHybrid.Shared.csproj", "{5FF7D2EC-AE9B-4D51-8252-B29D778C1A02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MATTAR.LocalAi.MauiBlazorHybrid.Web", "samples\MATTAR.LocalAi.MauiBlazorHybrid\MATTAR.LocalAi.MauiBlazorHybrid.Web\MATTAR.LocalAi.MauiBlazorHybrid.Web.csproj", "{8AE963BC-96AE-4D48-81E3-E3D95F3B695C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{48B8F461-27D1-4CE8-9E3C-FA19BB0BCACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48B8F461-27D1-4CE8-9E3C-FA19BB0BCACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48B8F461-27D1-4CE8-9E3C-FA19BB0BCACB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
