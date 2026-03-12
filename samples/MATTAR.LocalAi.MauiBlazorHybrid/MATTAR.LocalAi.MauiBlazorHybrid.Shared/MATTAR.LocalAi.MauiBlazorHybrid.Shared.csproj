@@ -16,7 +16,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<ProjectReference Include="..\..\MATTAR.LocalAi\MATTAR.LocalAi.csproj" />
+		<ProjectReference Include="..\..\..\src\MATTAR.LocalAi\MATTAR.LocalAi.csproj" />
 	</ItemGroup>
 	
 	<ItemGroup>
