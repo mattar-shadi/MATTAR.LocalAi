@@ -21,6 +21,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MATTAR.LocalAi\MATTAR.LocalAi.csproj" />
+    <ProjectReference Include="..\..\src\providers\MATTAR.LocalAi.OnnxProvider.Abstractions\MATTAR.LocalAi.OnnxProvider.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\providers\MATTAR.LocalAi.OnnxProvider.Cpu\MATTAR.LocalAi.OnnxProvider.Cpu.csproj" />
+    <ProjectReference Include="..\..\src\providers\MATTAR.LocalAi.OnnxProvider.Cuda\MATTAR.LocalAi.OnnxProvider.Cuda.csproj" />
+    <ProjectReference Include="..\..\src\providers\MATTAR.LocalAi.OnnxProvider.DirectML\MATTAR.LocalAi.OnnxProvider.DirectML.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="NUnit.Framework" />
