@@ -33,7 +33,10 @@ public class Chat : IChat
             throw new FileNotFoundException(vectorStoreVocabModelPath);
         Debug.Print($"Vector Store Vocab Model Path: {vectorStoreVocabModelPath}");
 
-        // Créer Semantic Kernel
+        // Detect DirectML availability and print to console
+        OnnxRuntimeSessionFactory.DetectExecutionProvider();
+
+        // Crï¿½er Semantic Kernel
         var kernelBuilder = Kernel.CreateBuilder();
         // set onnx runtime model
         kernelBuilder.AddOnnxRuntimeGenAIChatCompletion(modelId: "phi4", modelPath: modelPath);
