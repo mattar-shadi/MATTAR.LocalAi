@@ -25,6 +25,7 @@ public class FoundryLocalChatAgent : IChat, IAsyncDisposable
     private readonly ILogger _logger;
 
     private FoundryLocalManager? _manager;
+    // OpenAIChatClient is Microsoft.AI.Foundry.Local.OpenAIChatClient (not the OpenAI SDK client)
     private OpenAIChatClient? _chatClient;
     private readonly SemaphoreSlim _initLock = new(1, 1);
 
@@ -59,6 +60,8 @@ public class FoundryLocalChatAgent : IChat, IAsyncDisposable
                 return _chatClient;
 
             var config = new Configuration { AppName = "MATTAR.LocalAi" };
+            // CreateAsync initialises the FoundryLocalManager singleton; the instance is
+            // then available via the static FoundryLocalManager.Instance property.
             await FoundryLocalManager.CreateAsync(config, _logger, cancellationToken);
             _manager = FoundryLocalManager.Instance;
 
@@ -102,10 +105,10 @@ public class FoundryLocalChatAgent : IChat, IAsyncDisposable
         }
     }
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         _initLock.Dispose();
         _manager?.Dispose();
-        await ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 }
