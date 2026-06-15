@@ -29,6 +29,16 @@ public static class ChatExtensions
         return services;
     }
 
+    public static IServiceCollection AddFoundryLocalChatAgent(
+        this IServiceCollection services)
+    {
+        services.AddTransient<IChat, FoundryLocalChatAgent>();
+        services.AddSingleton<IKnowledgeBase, KnowledgeBase>();
+        services.AddChatSqliteMemory();
+
+        return services;
+    }
+
     public static IServiceCollection AddChatSqliteMemory(
         this IServiceCollection services)
     {
